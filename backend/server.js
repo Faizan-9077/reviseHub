@@ -1,11 +1,21 @@
 const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
+const cors = require("cors");
+
 
 dotenv.config();
 
 const app = express();
+
+app.use(cors({
+  origin: "http://localhost:5173", // your Vite frontend
+  credentials: true, // optional, if using cookies
+}));
+
 app.use(express.json());
+
+
 // connect to MongoDB
 mongoose.connect(process.env.MONGO_URI, {
   useNewUrlParser: true,
