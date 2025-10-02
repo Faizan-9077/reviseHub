@@ -27,8 +27,13 @@ mongoose.connect(process.env.MONGO_URI, {
 const authRoutes = require("./routes/auth");
 app.use('/auth', authRoutes);
 
-const noteRoutes = require("./routes/noteRoutes");
-app.use("/notes", noteRoutes);
+const notesRoutes = require("./routes/notes");
+app.use("/notes", notesRoutes);
+
+const path = require('path');
+// Serve files in uploads folder
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
+
 
 const plannerRoutes = require('./routes/plannerRoutes');
 app.use('/planner', plannerRoutes);
@@ -36,6 +41,7 @@ app.use('/planner', plannerRoutes);
 
 const progressRoutes = require('./routes/progressRoutes');
 app.use('/progress', progressRoutes);
+
 
 
 
