@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 export default function PlannerPage() {
   const [plans, setPlans] = useState([]);
@@ -38,6 +39,7 @@ export default function PlannerPage() {
     const topicsArray = newTopics.split(",").map((t) => ({
       name: t.trim(),
       status: "pending",
+      dueDate: null,
     }));
 
     try {
@@ -84,6 +86,29 @@ export default function PlannerPage() {
     return Math.round((completed / topics.length) * 100);
   };
 
+  // Drag & Drop handling
+  const handleDragEnd = async (result, planId) => {
+    if (!result.destination) return;
+    const plan = plans.find((p) => p._id === planId);
+    const items = Array.from(plan.topics);
+    const [reorderedItem] = items.splice(result.source.index, 1);
+    items.splice(result.destination.index, 0, reorderedItem);
+
+    try {
+      await fetch(`${API}/planner/${planId}/reorder`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({ topics: items }),
+      });
+      fetchPlans();
+    } catch (err) {
+      console.error("Error reordering topics:", err);
+    }
+  };
+
   if (loading) return <div>Loading study plans...</div>;
 
   return (
@@ -98,7 +123,6 @@ export default function PlannerPage() {
         </button>
       </div>
 
-      {/* Planner Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
         {plans.map((plan) => (
           <div
@@ -117,36 +141,65 @@ export default function PlannerPage() {
               ></div>
             </div>
 
-            <ul>
-              {plan.topics.map((topic) => (
-                <li
-                  key={topic._id}
-                  className="flex justify-between items-center mb-2"
-                >
-                  <span
-                    className={
-                      topic.status === "completed"
-                        ? "line-through text-gray-400"
-                        : "text-gray-700"
-                    }
+            {/* Drag & Drop Topics */}
+            <DragDropContext
+              onDragEnd={(result) => handleDragEnd(result, plan._id)}
+            >
+              <Droppable droppableId={plan._id}>
+                {(provided) => (
+                  <ul
+                    {...provided.droppableProps}
+                    ref={provided.innerRef}
+                    className="space-y-2"
                   >
-                    {topic.name}
-                  </span>
-                  <button
-                    onClick={() =>
-                      toggleTopicStatus(plan._id, topic._id, topic.status)
-                    }
-                    className={`px-3 py-1 rounded-full text-sm font-medium transition ${
-                      topic.status === "completed"
-                        ? "bg-green-500 text-white hover:bg-green-600"
-                        : "bg-gray-300 text-gray-700 hover:bg-gray-400"
-                    }`}
-                  >
-                    {topic.status === "completed" ? "Done" : "Pending"}
-                  </button>
-                </li>
-              ))}
-            </ul>
+                    {plan.topics.map((topic, index) => (
+                      <Draggable
+                        key={topic._id}
+                        draggableId={topic._id}
+                        index={index}
+                      >
+                        {(provided) => (
+                          <li
+                            ref={provided.innerRef}
+                            {...provided.draggableProps}
+                            {...provided.dragHandleProps}
+                            className="flex justify-between items-center p-2 border rounded shadow-sm bg-gray-50"
+                          >
+                            <span
+                              className={
+                                topic.status === "completed"
+                                  ? "line-through text-gray-400 font-medium"
+                                  : "text-gray-700 font-medium"
+                              }
+                            >
+                              {topic.name}
+                            </span>
+                            {topic.dueDate && (
+                              <span className="text-xs text-red-500 ml-2">
+                                Due: {new Date(topic.dueDate).toLocaleDateString()}
+                              </span>
+                            )}
+                            <button
+                              onClick={() =>
+                                toggleTopicStatus(plan._id, topic._id, topic.status)
+                              }
+                              className={`px-3 py-1 rounded-full text-sm font-medium transition ${
+                                topic.status === "completed"
+                                  ? "bg-green-500 text-white hover:bg-green-600"
+                                  : "bg-gray-300 text-gray-700 hover:bg-gray-400"
+                              }`}
+                            >
+                              {topic.status === "completed" ? "Done" : "Pending"}
+                            </button>
+                          </li>
+                        )}
+                      </Draggable>
+                    ))}
+                    {provided.placeholder}
+                  </ul>
+                )}
+              </Droppable>
+            </DragDropContext>
           </div>
         ))}
       </div>
