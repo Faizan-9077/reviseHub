@@ -1,31 +1,34 @@
-const express = require('express');
+const express = require("express");
 const router = express.Router();
-const authMiddleware = require('../middleware/authMiddleware');
-const StudyPlan = require('../models/StudyPlan');
+const authMiddleware = require("../middleware/authMiddleware");
+const StudyPlan = require("../models/StudyPlan");
 
+// Protect all /progress routes
 router.use(authMiddleware);
 
-// GET progress: % completed per subject
-router.get('/', async (req, res) => {
-    try {
-        const plans = await StudyPlan.find({ userId: req.user._id });
+// GET /progress → calculate progress dynamically
+router.get("/", async (req, res) => {
+  try {
+    const plans = await StudyPlan.find({ userId: req.user._id });
 
-        const progress = plans.map(plan => {
-            const total = plan.topics.length;
-            const completed = plan.topics.filter(t => t.status === 'completed').length;
-            const percentCompleted = total === 0 ? 0 : Math.round((completed / total) * 100);
-            return {
-                subject: plan.subject,
-                totalTopics: total,
-                completedTopics: completed,
-                percentCompleted
-            };
-        });
+    let totalTopics = 0;
+    let completedTopics = 0;
 
-        res.json(progress);
-    } catch (err) {
-        res.status(500).json({ message: err.message });
-    }
+    // Loop through all study plans and count topics
+    plans.forEach((plan) => {
+      totalTopics += plan.topics.length;
+      completedTopics += plan.topics.filter((t) => t.status === "completed")
+        .length;
+    });
+
+    const overallProgress =
+      totalTopics === 0 ? 0 : Math.round((completedTopics / totalTopics) * 100);
+
+    res.json({ overallProgress, plans });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
 });
 
 module.exports = router;
