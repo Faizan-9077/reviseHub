@@ -6,6 +6,11 @@ const noteSchema = new mongoose.Schema(
     title: { type: String, required: true },
     description: { type: String, default: '' },
     filePath: { type: String, required: true },
+
+    // New fields
+    category: { type: String, default: '' },          // Subject/Exam
+    tags: { type: [String], default: [] },           // Array of tags
+    favorite: { type: Boolean, default: false },     // Favorite/bookmark
   },
   { timestamps: true }
 );

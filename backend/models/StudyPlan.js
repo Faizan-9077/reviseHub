@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const topicSchema = new mongoose.Schema({
   name: { type: String, required: true },
   status: { type: String, enum: ['pending', 'completed'], default: 'pending' },
+  dueDate: { type: Date, default: null },
 });
 
 // Study plan schema
@@ -16,5 +17,4 @@ const studyPlanSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Export the model
 module.exports = mongoose.model('StudyPlan', studyPlanSchema);
