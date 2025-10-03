@@ -63,6 +63,15 @@ export default function DashboardLayout() {
 
         <nav className="space-y-2">
           <NavLink
+            to="/dashboard"
+            end
+            className={({ isActive }) =>
+              `block p-2 rounded ${isActive ? "bg-indigo-100 font-semibold" : "hover:bg-gray-50"}`
+            }
+          >
+            🏠 Home
+          </NavLink>
+          <NavLink
             to="/dashboard/notes"
             className={({ isActive }) =>
               `block p-2 rounded ${isActive ? "bg-indigo-100 font-semibold" : "hover:bg-gray-50"}`
