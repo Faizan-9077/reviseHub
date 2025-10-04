@@ -53,8 +53,8 @@ export default function DashboardLayout() {
   return (
     <div className="min-h-screen flex bg-gray-100">
       {/* Fixed Sidebar */}
-      <aside className="w-64 bg-white shadow-lg fixed left-0 top-0 h-full overflow-y-auto z-10">
-        <div className="p-4">
+      <aside className="w-64 bg-white shadow-lg fixed left-0 top-0 h-full flex flex-col z-10">
+        <div className="p-4 flex-1">
           <div className="mb-6">
             <h1 className="text-xl font-bold">ReviseHub</h1>
             <p className="text-sm text-gray-500">Welcome,</p>
@@ -97,15 +97,16 @@ export default function DashboardLayout() {
               📊 Progress
             </NavLink>
           </nav>
+        </div>
 
-          <div className="mt-6">
-            <button
-              onClick={logout}
-              className="w-full py-2 px-3 bg-red-500 text-white rounded hover:bg-red-600"
-            >
-              Logout
-            </button>
-          </div>
+        {/* Logout button at bottom */}
+        <div className="p-4 border-t border-gray-200">
+          <button
+            onClick={logout}
+            className="w-full py-2 px-3 bg-red-500 text-white rounded hover:bg-red-600 transition-colors"
+          >
+            Logout
+          </button>
         </div>
       </aside>
 

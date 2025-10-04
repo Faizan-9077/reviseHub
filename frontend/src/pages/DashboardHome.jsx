@@ -15,7 +15,7 @@ export default function DashboardHome() {
   const fetchDashboardData = async () => {
     try {
       // Fetch user info
-      const userRes = await fetch(`${API}/auth/me`, {
+      const userRes = await fetch(`${API}/auth/profile`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (userRes.ok) {
