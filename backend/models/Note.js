@@ -8,9 +8,8 @@ const noteSchema = new mongoose.Schema(
     filePath: { type: String, required: true },
 
     // New fields
-    category: { type: String, default: '' },          // Subject/Exam
-    tags: { type: [String], default: [] },           // Array of tags
-    favorite: { type: Boolean, default: false },     // Favorite/bookmark
+    category: { type: String, default: '' },      // Subject/Exam
+    favorite: { type: Boolean, default: false },  // Favorite/bookmark
   },
   { timestamps: true }
 );
