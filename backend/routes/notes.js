@@ -26,10 +26,10 @@ router.get('/', authMiddleware, async (req, res) => {
   }
 });
 
-// POST /notes → create a new note with file upload + category + tags
+// POST /notes → create a new note with file upload + category
 router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
   try {
-    const { title, description, category, tags } = req.body;
+    const { title, description, category } = req.body;
 
     if (!title || !req.file) {
       return res.status(400).json({ message: 'Title and file are required' });
@@ -41,7 +41,6 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
       description: description || '',
       filePath: req.file.filename,
       category: category || '',
-      tags: tags ? tags.split(',').map(t => t.trim()) : [],
       favorite: false,
     });
 
@@ -57,17 +56,16 @@ router.post('/', authMiddleware, upload.single('file'), async (req, res) => {
   }
 });
 
-// PUT /notes/:id → update note metadata (title, description, category, tags, favorite)
+// PUT /notes/:id → update note metadata (title, description, category, favorite)
 router.put('/:id', authMiddleware, async (req, res) => {
   try {
-    const { title, description, category, tags, favorite } = req.body;
+    const { title, description, category, favorite } = req.body;
     const note = await Note.findOne({ _id: req.params.id, userId: req.user._id });
     if (!note) return res.status(404).json({ message: 'Note not found' });
 
     if (title !== undefined) note.title = title;
     if (description !== undefined) note.description = description;
     if (category !== undefined) note.category = category;
-    if (tags !== undefined) note.tags = tags.split(',').map(t => t.trim());
     if (favorite !== undefined) note.favorite = favorite;
 
     await note.save();
