@@ -32,13 +32,22 @@ export default function DashboardHome() {
         setPlans(plansData);
       }
 
-      // Fetch notes
-      const notesRes = await fetch(`${API}/notes`, {
+      // Fetch notes for display (include deleted for activity log)
+      const notesRes = await fetch(`${API}/notes?includeDeleted=true`, {
         headers: { Authorization: `Bearer ${token}` },
       });
       if (notesRes.ok) {
         const notesData = await notesRes.json();
         setNotes(notesData);
+      }
+
+      // Fetch monthly note stats including deleted
+      const statsRes = await fetch(`${API}/notes/stats`, {
+        headers: { Authorization: `Bearer ${token}` },
+      });
+      if (statsRes.ok) {
+        const stats = await statsRes.json();
+        setNotesMonthStats(stats);
       }
     } catch (err) {
       console.error(err);
@@ -56,7 +65,7 @@ export default function DashboardHome() {
   // Listen for storage changes (when other tabs update data)
   useEffect(() => {
     const handleStorageChange = (e) => {
-      if (e.key === 'planner-updated' && token) {
+      if ((e.key === 'planner-updated' || e.key === 'notes-updated') && token) {
         fetchDashboardData();
       }
     };
@@ -120,18 +129,82 @@ export default function DashboardHome() {
       .slice(0, 3);
   };
 
+  // Helpers to compute week-over-week deltas
+  const [notesMonthStats, setNotesMonthStats] = useState({ thisMonth: 0, prevMonth: 0 });
+  const getDateDaysAgo = (days) => {
+    const d = new Date();
+    d.setDate(d.getDate() - days);
+    return d;
+  };
+
+  const countNotesBetween = (start, end) =>
+    notes.filter(n => {
+      const dt = new Date(n.createdAt);
+      return dt >= start && dt < end;
+    }).length;
+
+  const countCompletedTasksBetween = (start, end) => {
+    let count = 0;
+    plans.forEach(plan => {
+      plan.topics.forEach(topic => {
+        if (topic.status === 'completed') {
+          const ts = new Date(topic.updatedAt || plan.updatedAt || new Date(0));
+          if (ts >= start && ts < end) count += 1;
+        }
+      });
+    });
+    return count;
+  };
+
+  const computeWoWPercent = (current, previous) => {
+    if (current === 0 && previous === 0) return 0;
+    if (previous === 0) return 100; // from 0 to some value -> 100%
+    return Math.round(((current - previous) / previous) * 100);
+  };
+
+  const last7Start = getDateDaysAgo(7);
+  const now = new Date();
+  const prev7Start = getDateDaysAgo(14);
+
+  const notesThisWeek = countNotesBetween(last7Start, now);
+  const notesPrevWeek = countNotesBetween(prev7Start, last7Start);
+  const notesDeltaPct = computeWoWPercent(notesThisWeek, notesPrevWeek);
+
+  // Weekly deltas (for widgets labeled "This week")
+  const tasksThisWeek = countCompletedTasksBetween(last7Start, now);
+  const tasksPrevWeek = countCompletedTasksBetween(prev7Start, last7Start);
+  const tasksDeltaWeekPct = computeWoWPercent(tasksThisWeek, tasksPrevWeek);
+
+  // Monthly deltas (for widgets labeled "This month")
+  const getMonthStart = (d) => new Date(d.getFullYear(), d.getMonth(), 1);
+  const monthStart = getMonthStart(new Date());
+  const prevMonthStart = new Date(monthStart.getFullYear(), monthStart.getMonth() - 1, 1);
+  const tasksThisMonth = countCompletedTasksBetween(monthStart, now);
+  const tasksPrevMonth = countCompletedTasksBetween(prevMonthStart, monthStart);
+  const tasksDeltaMonthPct = computeWoWPercent(tasksThisMonth, tasksPrevMonth);
+
   // Get recent activity
   const getRecentActivity = () => {
     const activities = [];
     
-    // Add note activities
+    // Add note activities (uploads and deletions)
     notes.forEach(note => {
-      activities.push({
-        type: 'note',
-        title: `You uploaded "${note.title}"`,
-        date: new Date(note.createdAt),
-        icon: 'document'
-      });
+      if (note.createdAt) {
+        activities.push({
+          type: 'note',
+          title: `You uploaded "${note.title}"`,
+          date: new Date(note.createdAt),
+          icon: 'document'
+        });
+      }
+      if (note.isDeleted && note.updatedAt) {
+        activities.push({
+          type: 'note_deleted',
+          title: `You deleted "${note.title}"`,
+          date: new Date(note.updatedAt),
+          icon: 'trash'
+        });
+      }
     });
 
     // Add task activities (both added and completed)
@@ -205,15 +278,7 @@ export default function DashboardHome() {
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-7xl mx-auto px-6 py-8">
-        {/* Welcome Banner */}
-        <div className="bg-white rounded-xl p-6 mb-8 shadow-sm">
-          <div className="text-center">
-            <h2 className="text-2xl font-bold text-gray-900">
-              Welcome back, {user?.name || 'Student'}! Here's your study overview for today.
-            </h2>
-            <p className="text-gray-600 mt-1 italic">"Every study session counts. Keep it up!"</p>
-          </div>
-        </div>
+        
 
         {/* Key Metrics */}
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
@@ -222,14 +287,23 @@ export default function DashboardHome() {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Total Notes</p>
-                <p className="text-3xl font-bold text-gray-900">{notes.length}</p>
-                <p className="text-sm text-gray-500">This week</p>
-                <p className="text-sm text-green-600 flex items-center mt-1">
-                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                  </svg>
-                  ↑ 3% from last week
-                </p>
+                <p className="text-3xl font-bold text-gray-900">{notesMonthStats.thisMonth}</p>
+                <p className="text-sm text-gray-500">Uploaded this month</p>
+                {notesMonthStats.thisMonth > 0 ? (
+                  <p className="text-sm text-green-600 flex items-center mt-1">
+                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                    {(() => {
+                      const prev = notesMonthStats.prevMonth || 0;
+                      const curr = notesMonthStats.thisMonth || 0;
+                      const pct = prev === 0 ? (curr > 0 ? 100 : 0) : Math.round(((curr - prev) / prev) * 100);
+                      return pct >= 0 ? `↑ ${pct}%` : `↓ ${Math.abs(pct)}%`;
+                    })()} from last month
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-500 mt-1">No data yet</p>
+                )}
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -249,12 +323,16 @@ export default function DashboardHome() {
                   {plans.reduce((acc, plan) => acc + plan.topics.filter(t => t.status === 'completed').length, 0)}
                 </p>
                 <p className="text-sm text-gray-500">This month</p>
-                <p className="text-sm text-green-600 flex items-center mt-1">
-                  <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                  </svg>
-                  ↑ 8% from last week
-                </p>
+                {plans.reduce((acc, plan) => acc + plan.topics.filter(t => t.status === 'completed').length, 0) > 0 ? (
+                  <p className="text-sm text-green-600 flex items-center mt-1">
+                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
+                    </svg>
+                    {tasksDeltaMonthPct >= 0 ? `↑ ${tasksDeltaMonthPct}%` : `↓ ${Math.abs(tasksDeltaMonthPct)}%`} from last month
+                  </p>
+                ) : (
+                  <p className="text-sm text-gray-500 mt-1">No data yet</p>
+                )}
               </div>
               <div className="w-12 h-12 bg-blue-100 rounded-lg flex items-center justify-center">
                 <svg className="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -369,14 +447,26 @@ export default function DashboardHome() {
                               <span className="text-xs text-gray-500">
                                 {new Date(note.createdAt).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
                               </span>
+                              {note.isDeleted && (
+                                <span className="ml-2 px-2 py-0.5 rounded-full text-[10px] bg-red-100 text-red-700">Deleted</span>
+                              )}
                             </div>
                           </div>
                         </div>
-                        <button className="text-gray-400 hover:text-gray-600">
-                          <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                          </svg>
-                        </button>
+                        {!note.isDeleted && note.fileUrl ? (
+                          <button
+                            onClick={() => window.open(note.fileUrl, '_blank')}
+                            className="text-gray-400 hover:text-gray-600"
+                            title="Open"
+                            aria-label="Open note"
+                          >
+                            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                            </svg>
+                          </button>
+                        ) : (
+                          <span className="text-xs text-gray-400">&nbsp;</span>
+                        )}
                       </div>
                     </div>
                   ))
@@ -408,22 +498,20 @@ export default function DashboardHome() {
                       style={{ width: `${completionRate}%` }}
                     ></div>
                   </div>
-                  <p className="text-sm text-green-600 flex items-center mt-1">
-                    <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 10l7-7m0 0l7 7m-7-7v18" />
-                    </svg>
-                    ↑ +12%
-                  </p>
+                  {completionRate > 0 ? (
+                    <p className="text-sm text-green-600 flex items-center mt-1">
+                      <svg className="w-3 h-3 mr-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      </svg>
+                    </p>
+                  ) : (
+                    <p className="text-sm text-gray-500 mt-1">No data yet</p>
+                  )}
                 </div>
                 
                 <div className="grid grid-cols-2 gap-4">
-                  <div className="text-center">
+                  <div className="text-left">
                     <p className="text-2xl font-bold text-gray-900">{tasksDone}</p>
                     <p className="text-sm text-gray-500">Tasks Done</p>
-                  </div>
-                  <div className="text-center">
-                    <p className="text-2xl font-bold text-gray-900">8.5h</p>
-                    <p className="text-sm text-gray-500">Study Hours</p>
                   </div>
                 </div>
               </div>
@@ -456,6 +544,10 @@ export default function DashboardHome() {
                         ) : activity.icon === 'plus' ? (
                           <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
+                          </svg>
+                        ) : activity.icon === 'trash' ? (
+                          <svg className="w-4 h-4 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
                           </svg>
                         ) : (
                           <svg className="w-4 h-4 text-gray-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
