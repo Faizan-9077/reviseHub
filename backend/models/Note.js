@@ -10,6 +10,7 @@ const noteSchema = new mongoose.Schema(
     // New fields
     category: { type: String, default: '' },      // Subject/Exam
     favorite: { type: Boolean, default: false },  // Favorite/bookmark
+    isDeleted: { type: Boolean, default: false }, // Soft delete flag
   },
   { timestamps: true }
 );
