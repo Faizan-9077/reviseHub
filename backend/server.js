@@ -2,55 +2,42 @@ const express = require("express");
 const dotenv = require("dotenv");
 const mongoose = require("mongoose");
 const cors = require("cors");
-
+const path = require("path");
 
 dotenv.config();
 
 const app = express();
 
+// CORS configuration
 app.use(cors({
-  origin: "http://localhost:5173", // your Vite frontend
-  credentials: true, // optional, if using cookies
+  origin: process.env.CORS_ORIGIN || "*", // use frontend URL in production
+  credentials: true
 }));
 
+// JSON body parser
 app.use(express.json());
 
-
-// connect to MongoDB
-mongoose.connect(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-})
-.then(() => console.log(" MongoDB connected"))
-.catch(err => console.error("MongoDB connection error:", err));
-
-const authRoutes = require("./routes/auth");
-app.use('/auth', authRoutes);
-
-const notesRoutes = require("./routes/notes");
-app.use("/notes", notesRoutes);
-
-const path = require('path');
-// Serve files in uploads folder
+// Serve uploads folder
 app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
+// MongoDB connection
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("MongoDB connected"))
+  .catch(err => console.error("MongoDB connection error:", err));
 
-const plannerRoutes = require('./routes/plannerRoutes');
-app.use('/planner', plannerRoutes);
+// Routes
+app.use("/auth", require("./routes/auth"));
+app.use("/notes", require("./routes/notes"));
+app.use("/planner", require("./routes/plannerRoutes"));
+app.use("/progress", require("./routes/progressRoutes"));
 
-
-const progressRoutes = require('./routes/progressRoutes');
-app.use('/progress', progressRoutes);
-
-
-
-
-const PORT = process.env.PORT || 5000;
-
+// Test route
 app.get("/", (req, res) => {
-  res.send(" Server is running...");
+  res.send("Server is running...");
 });
 
+// Listen on Render-assigned PORT
+const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
