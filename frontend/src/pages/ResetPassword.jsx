@@ -9,10 +9,9 @@ export default function ResetPassword() {
   const [submitting, setSubmitting] = useState(false);
   const [message, setMessage] = useState("");
 
-  // Use backend URL (Render) from env
   const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
-  //  Extract token automatically from URL query
+  // Extract token from query string
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const t = params.get("token");
@@ -47,7 +46,7 @@ export default function ResetPassword() {
       if (!res.ok) {
         setMessage(data.message || "Failed to reset password");
       } else {
-        setMessage("✅ Password reset successfully! Redirecting to login...");
+        setMessage(" Password reset successfully! Redirecting to login...");
         setTimeout(() => navigate("/login"), 1500);
       }
     } catch (err) {
@@ -67,7 +66,6 @@ export default function ResetPassword() {
         </p>
 
         <form className="mt-8 space-y-5" onSubmit={handleSubmit}>
-          {/*  Token field auto-filled from URL */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">Reset Token</label>
             <input
@@ -81,7 +79,6 @@ export default function ResetPassword() {
             />
           </div>
 
-          {/* Password field */}
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-1">New Password</label>
             <div className="relative">
