@@ -5,35 +5,35 @@ export default function ForgotPassword() {
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [serverMessage, setServerMessage] = useState("");
-  const [devLink, setDevLink] = useState("");
-  const [previewUrl, setPreviewUrl] = useState("");
-  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
+  const [resetLink, setResetLink] = useState(""); // <-- always use this
+  const API = import.meta.env.VITE_API_URL || "http://localhost:10000";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setServerMessage("");
+    setResetLink(""); // clear previous link
     setSubmitting(true);
+
     try {
       const res = await fetch(`${API}/auth/forgot-password`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ email }),
       });
+
       const data = await res.json();
+
       if (!res.ok) {
         setServerMessage(data.message || "Failed to send reset link");
       } else {
-        setServerMessage(
-          data.message || "If that email exists, reset instructions were sent"
-        );
-        if (import.meta.env.DEV) {
-          setPreviewUrl(data.previewUrl || "");
-          setDevLink(data.devResetLink || "");
+        setServerMessage(data.message || "If that email exists, reset instructions were sent");
+        if (data.resetLink) {
+          setResetLink(data.resetLink); // always show usable reset link
         }
       }
     } catch (err) {
       setServerMessage("Something went wrong");
-      if (import.meta.env.DEV) console.error(err);
+      console.error(err);
     } finally {
       setSubmitting(false);
     }
@@ -71,18 +71,10 @@ export default function ForgotPassword() {
         {serverMessage && (
           <div className="mt-4 text-center space-y-2" role="alert">
             <p className="text-sm text-gray-700 break-words">{serverMessage}</p>
-            {import.meta.env.DEV && previewUrl && (
+            {resetLink && (
               <p className="text-xs text-gray-500 break-words">
-                Email preview (dev):{" "}
-                <a className="text-blue-600 underline" href={previewUrl} target="_blank" rel="noreferrer">
-                  Open
-                </a>
-              </p>
-            )}
-            {import.meta.env.DEV && devLink && (
-              <p className="text-xs text-gray-500 break-words">
-                Direct reset link (dev):{" "}
-                <a className="text-blue-600 underline" href={devLink}>
+                Reset Link:{" "}
+                <a className="text-blue-600 underline" href={resetLink} target="_blank" rel="noreferrer">
                   Open
                 </a>
               </p>

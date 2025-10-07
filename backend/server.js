@@ -10,8 +10,7 @@ const app = express();
 
 // CORS configuration
 app.use(cors({
-  origin: process.env.CORS_ORIGIN, // use frontend URL in production
-  credentials: true
+  origin: [process.env.CORS_ORIGIN, "http://localhost:5173"],
 }));
 
 // JSON body parser
