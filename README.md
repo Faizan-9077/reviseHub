@@ -13,7 +13,7 @@
 
 ## 🧭 Overview
 
-**ReviseHub** is a modern, intuitive study management web app built on the **MERN stack** (MongoDB, Express.js, React, Node.js). It empowers students to organize notes, plan study sessions, track progress, and manage revisions with a clean analytics dashboard and secure authentication.
+**ReviseHub** is a modern, intuitive study management web app built on the **MERN stack** (MongoDB, Express.js, React, Node.js). It empowers students to organize notes, plan study sessions, track prog[...]
 
 ---
 
@@ -37,16 +37,16 @@
 
 ## 📑 Table of Contents
 
-- [Features](#-features)
-- [Tech Stack](#-tech-stack)
-- [Getting Started](#-getting-started)
-- [Local Development URLs](#-local-development-urls)
-- [Deployment](#-deployment)
-- [Usage Guide](#-usage-guide)
-- [Contributing](#-contributing)
-- [License](#-license)
-- [Contact](#-contact)
-- [FAQ](#-faq)
+- [Features](#features)
+- [Tech Stack](#tech-stack)
+- [Getting Started](#getting-started)
+- [Local Development URLs](#local-development-urls)
+- [Deployment](#deployment)
+- [Usage Guide](#usage-guide)
+- [Contributing](#contributing)
+- [License](#license)
+- [Contact](#contact)
+- [FAQ](#faq)
 
 ---
 
