@@ -11,13 +11,13 @@
 
 ---
 
-## 🧭 Overview
+## Overview
 
-**ReviseHub** is a modern, intuitive study management web app built on the **MERN stack** (MongoDB, Express.js, React, Node.js). It empowers students to organize notes, plan study sessions, track prog[...]
+**ReviseHub** is a modern, intuitive study management web app built on the **MERN stack** (MongoDB, Express.js, React, Node.js). It empowers students to organize notes, plan study sessions, track progress, and more.
 
 ---
 
-## 📸 Screenshots
+## Screenshots
 
 <div align="center">
   <b>Dashboard</b> &nbsp;&nbsp;&nbsp;&nbsp; <b>Notes Page</b><br>
@@ -35,7 +35,7 @@
 
 ---
 
-## 📑 Table of Contents
+## Table of Contents
 
 - [Features](#features)
 - [Tech Stack](#tech-stack)
@@ -50,8 +50,7 @@
 
 ---
 
-
-## ✨ Features
+## Features
 
 - **Dashboard** – Overview of progress, tasks, and recent activities
 - **Notes Management** – Organize study resources with **Cloudinary storage**
@@ -63,8 +62,7 @@
 
 ---
 
-## 🧰 Tech Stack
-
+## Tech Stack
 
 | Category           | Technologies                        |
 | ------------------ | ----------------------------------- |
@@ -77,7 +75,7 @@
 
 ---
 
-## 🛠️ Getting Started
+## Getting Started
 
 ### Prerequisites
 
@@ -85,7 +83,7 @@
 - [MongoDB](https://www.mongodb.com/) (local or cloud, e.g. Atlas)
 - [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
-### 🔧 Installation
+### Installation
 
 1. **Clone the repository**
    ```bash
@@ -140,7 +138,7 @@
 
 ---
 
-## 💻 Local Development URLs
+## Local Development URLs
 
 | Service          | URL                                            |
 | ---------------- | ---------------------------------------------- |
@@ -149,7 +147,7 @@
 
 ---
 
-## 🌍 Deployment
+## Deployment
 
 | Service                   | Environment | URL                                                                              |
 | ------------------------- | ----------- | -------------------------------------------------------------------------------- |
@@ -160,7 +158,7 @@
 
 ---
 
-## 🧩 Usage Guide
+## Usage Guide
 
 1. **Register or Login** to access features
 2. **Manage Notes** – Upload, tag, and organize notes
@@ -170,7 +168,7 @@
 
 ---
 
-## 🧑‍💻 Contributing
+## Contributing
 
 Contributions are welcome! Please:
 
@@ -189,13 +187,13 @@ Contributions are welcome! Please:
 
 ---
 
-## 🪪 License
+## License
 
 Licensed under the [MIT License](LICENSE).
 
 ---
 
-## 📬 Contact
+## Contact
 
 👤 **Faizan**  
 🔗 [GitHub](https://github.com/Faizan-9077)  
@@ -203,7 +201,7 @@ Licensed under the [MIT License](LICENSE).
 
 ---
 
-## ❓ FAQ
+## FAQ
 
 **Q:** Why is my Cloudinary upload failing?  
 **A:** Check your `.env` for correct Cloudinary credentials.
