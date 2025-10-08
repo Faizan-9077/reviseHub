@@ -1,4 +1,5 @@
 # 🌟 ReviseHub
+
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Last Commit](https://img.shields.io/github/last-commit/Faizan-9077/reviseHub.svg)](https://github.com/Faizan-9077/reviseHub/commits)
 [![Open Issues](https://img.shields.io/github/issues/Faizan-9077/reviseHub.svg)](https://github.com/Faizan-9077/reviseHub/issues)
@@ -8,32 +9,62 @@
 [![Responsive](https://img.shields.io/badge/Responsive-Yes-success)](https://github.com/Faizan-9077/reviseHub)
 [![JavaScript](https://img.shields.io/badge/JavaScript-99.2%25-yellow)](https://github.com/Faizan-9077/reviseHub)
 
-> _A MERN-based smart study app with dashboards, notes management, planners, progress tracking, and secure authentication._
-
----
-
-Ah! Got it — you want the README in the **exact same copy-pasteable Markdown format** you originally wrote, keeping all your headings, emojis, tables, and sections, just updated for **Cloudinary and deployed URLs**. I’ll rewrite it fully from **Overview onward** in that style.
-
 ---
 
 ## 🧭 Overview
 
-**ReviseHub** is a modern and intuitive study management web app built using the **MERN stack (MongoDB, Express.js, React, Node.js)**. It empowers students to **organize their notes, plan study sessions, and monitor their progress** through an elegant, responsive interface.
+**ReviseHub** is a modern, intuitive study management web app built on the **MERN stack** (MongoDB, Express.js, React, Node.js). It empowers students to organize notes, plan study sessions, track progress, and manage revisions with a clean analytics dashboard and secure authentication.
 
 ---
 
+## 📸 Screenshots
+
+<div align="center">
+  <b>Dashboard</b> &nbsp;&nbsp;&nbsp;&nbsp; <b>Notes Page</b><br>
+  <img src="https://github.com/Faizan-9077/reviseHub/blob/main/frontend/src/assets/DashBoardPage.png?raw=true" alt="Dashboard Screenshot" style="height:320px; width:48%; object-fit:cover;"/>
+  <img src="https://github.com/Faizan-9077/reviseHub/blob/main/frontend/src/assets/NotesPage.png?raw=true" alt="Notes Screenshot" style="height:320px; width:48%; object-fit:cover;"/>
+  <br><br>
+  <b>Planner Page</b> &nbsp;&nbsp;&nbsp;&nbsp; <b>Progress Page</b><br>
+  <img src="https://github.com/Faizan-9077/reviseHub/blob/main/frontend/src/assets/PlannerPage.png?raw=true" alt="Planner Screenshot" style="height:320px; width:48%; object-fit:cover;"/>
+  <img src="https://github.com/Faizan-9077/reviseHub/blob/main/frontend/src/assets/ProgressPage.png?raw=true" alt="Progress Screenshot" style="height:320px; width:48%; object-fit:cover;"/>
+</div>
+
+---
+
+[🌐 **Live Demo**](https://revise-hub.vercel.app/) *(click to try now!)*
+
+---
+
+## 📑 Table of Contents
+
+- [Features](#-features)
+- [Tech Stack](#-tech-stack)
+- [Getting Started](#-getting-started)
+- [Local Development URLs](#-local-development-urls)
+- [Deployment](#-deployment)
+- [Usage Guide](#-usage-guide)
+- [Contributing](#-contributing)
+- [License](#-license)
+- [Contact](#-contact)
+- [FAQ](#-faq)
+
+---
+
+
 ## ✨ Features
 
-✅ **Dashboard** – Get an overview of your progress, tasks, and recent activities.
-📝 **Notes Management** – Upload, organize, and view your study resources in one place with **Cloudinary storage**.
-🗓️ **Study Planner** – Add and manage tasks, track deadlines, and maintain study consistency.
-📈 **Progress Tracker** – Visualize your performance and study trends.
-🔐 **Authentication** – Secure JWT-based login, registration, and password reset.
-📱 **Responsive UI** – Fully optimized for desktop, tablet, and mobile devices.
+- **Dashboard** – Overview of progress, tasks, and recent activities
+- **Notes Management** – Organize study resources with **Cloudinary storage**
+- **Study Planner** – Add/manage tasks, track deadlines, maintain consistency
+- **Progress Tracker** – Visualize performance and study trends
+- **Revision Tracker** – Monitor revision frequency
+- **Authentication** – Secure JWT-based login & password reset
+- **Responsive UI** – Optimized for desktop, tablet, and mobile
 
 ---
 
 ## 🧰 Tech Stack
+
 
 | Category           | Technologies                        |
 | ------------------ | ----------------------------------- |
@@ -50,32 +81,36 @@ Ah! Got it — you want the README in the **exact same copy-pasteable Markdown f
 
 ### Prerequisites
 
-Make sure you have the following installed:
-
-* [Node.js](https://nodejs.org/) (v14+ recommended)
-* [MongoDB](https://www.mongodb.com/) (local or cloud, e.g. Atlas)
-* [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
-
----
+- [Node.js](https://nodejs.org/) (v14+ recommended)
+- [MongoDB](https://www.mongodb.com/) (local or cloud, e.g. Atlas)
+- [npm](https://www.npmjs.com/) or [yarn](https://yarnpkg.com/)
 
 ### 🔧 Installation
 
 1. **Clone the repository**
-
    ```bash
    git clone https://github.com/Faizan-9077/reviseHub.git
    cd reviseHub
    ```
-2. **Install dependencies**
 
+2. **Install backend dependencies**
    ```bash
+   cd backend
    npm install
    # or
    yarn install
    ```
-3. **Configure environment variables**
-   Copy `.env.example` → `.env`, then update values:
 
+3. **Install frontend dependencies**
+   ```bash
+   cd ../frontend
+   npm install
+   # or
+   yarn install
+   ```
+
+4. **Configure environment variables**  
+   Copy `.env.example` to `.env` in the backend folder, then update values:
    ```
    MONGO_URI=your-mongodb-connection-string
    JWT_SECRET=your-secret-key
@@ -84,24 +119,24 @@ Make sure you have the following installed:
    CLOUDINARY_API_KEY=your-api-key
    CLOUDINARY_API_SECRET=your-api-secret
    ```
-4. **Run the backend server**
 
+5. **Start the backend server**
    ```bash
+   cd ../backend
    npm run dev
    # or
    yarn dev
    ```
+   > The backend runs at [http://localhost:5000](http://localhost:5000)
 
-   > The backend runs at **[http://localhost:5000](http://localhost:5000)**
-5. **Run the frontend**
-
+6. **Start the frontend**
    ```bash
-   npm run client
+   cd ../frontend
+   npm run dev
    # or
-   yarn client
+   yarn dev
    ```
-
-   > The frontend runs at **[http://localhost:5173](http://localhost:5173)**
+   > The frontend runs at [http://localhost:5173](http://localhost:5173)
 
 ---
 
@@ -119,7 +154,7 @@ Make sure you have the following installed:
 | Service                   | Environment | URL                                                                              |
 | ------------------------- | ----------- | -------------------------------------------------------------------------------- |
 | **Backend API (Render)**  | Production  | [https://revisehub-backend.onrender.com](https://revisehub-backend.onrender.com) |
-| **Frontend App (Vercel)** | Production  | [https://revisehub-frontend.vercel.app](https://revisehub-frontend.vercel.app)   |
+| **Frontend App (Vercel)** | Production  | [https://revise-hub.vercel.app/](https://revise-hub.vercel.app/)                 |
 | **Backend (Local Dev)**   | Development | [http://localhost:5000](http://localhost:5000)                                   |
 | **Frontend (Local Dev)**  | Development | [http://localhost:5173](http://localhost:5173)                                   |
 
@@ -127,51 +162,54 @@ Make sure you have the following installed:
 
 ## 🧩 Usage Guide
 
-1. **Register or Login** – Create your account to access features.
-2. **Manage Notes** – Upload and organize notes with tags and Cloudinary storage.
-3. **Plan Tasks** – Add study tasks and set priorities.
-4. **Track Progress** – Monitor your completion stats.
-5. **Reset Password** – Securely recover access anytime.
+1. **Register or Login** to access features
+2. **Manage Notes** – Upload, tag, and organize notes
+3. **Plan Tasks** – Add study tasks, set priorities
+4. **Track Progress** – Monitor completion stats
+5. **Reset Password** – Securely recover access anytime
 
 ---
 
 ## 🧑‍💻 Contributing
 
-Contributions are always welcome!
-Please follow these steps before submitting a pull request:
+Contributions are welcome! Please:
 
 1. Fork this repository
-2. Create your feature branch
-
+2. Create a feature branch
    ```bash
    git checkout -b feature/your-feature
    ```
-3. Commit your changes
-
+3. Commit changes
    ```bash
    git commit -m "Add your feature"
    ```
-4. Push to your branch
+4. Push & submit a Pull Request 🚀
 
-   ```bash
-   git push origin feature/your-feature
-   ```
-5. Submit a Pull Request 🚀
+> Please write [clear commit messages](https://chris.beams.io/posts/git-commit/) and add tests for new features.
 
 ---
 
 ## 🪪 License
 
-This project is licensed under the **[MIT License](LICENSE)**.
-You’re free to use, modify, and distribute this project with proper attribution.
+Licensed under the [MIT License](LICENSE).
 
 ---
 
 ## 📬 Contact
 
-👤 **Faizan**
-🔗 [GitHub](https://github.com/Faizan-9077)
-📧 *For queries or collaboration, feel free to open an issue!*
+👤 **Faizan**  
+🔗 [GitHub](https://github.com/Faizan-9077)  
+📧 *For queries or collaboration, open an issue!*
+
+---
+
+## ❓ FAQ
+
+**Q:** Why is my Cloudinary upload failing?  
+**A:** Check your `.env` for correct Cloudinary credentials.
+
+**Q:** How do I report a bug?  
+**A:** [Open an issue](https://github.com/Faizan-9077/reviseHub/issues).
 
 ---
 
