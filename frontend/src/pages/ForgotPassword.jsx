@@ -6,7 +6,7 @@ export default function ForgotPassword() {
   const [submitting, setSubmitting] = useState(false);
   const [serverMessage, setServerMessage] = useState("");
   const [resetLink, setResetLink] = useState(""); // <-- always use this
-  const API = import.meta.env.VITE_API_URL || "http://localhost:10000";
+  const API = import.meta.env.VITE_API_URL || "http://localhost:5000";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
